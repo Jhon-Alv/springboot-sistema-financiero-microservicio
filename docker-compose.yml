@@ -1,0 +1,42 @@
+version: "3.8"
+
+services:
+  mongo:
+    image: mongo:7.0
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./mongo-init:/docker-entrypoint-initdb.d
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: secret
+
+  cliente:
+    build: ./cliente-microservice
+    ports:
+      - "8081:8081"
+    environment:
+      - SPRING_DATA_MONGODB_URI=mongodb://root:secret@mongo:27017/reto-clientedb?authSource=admin
+    depends_on:
+      - mongo
+
+  producto:
+    build: ./productos_microservice
+    ports:
+      - "8082:8082"
+    environment:
+      - SPRING_DATA_MONGODB_URI=mongodb://root:secret@mongo:27017/reto-productosdb?authSource=admin
+    depends_on:
+      - mongo
+
+  bff:
+    build: ./bff
+    ports:
+      - "8080:8080"
+    environment:
+      - SERVICIO_CLIENTE_URL=http://cliente:8081
+      - SERVICIO_PRODUCTO_URL=http://producto:8082
+    depends_on:
+      - cliente
+      - producto

@@ -1,0 +1,40 @@
+server:
+  port: 8080
+
+servicio:
+  cliente:
+    url: "http://localhost:8081"
+  producto:
+    url: "http://localhost:8082"
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+  api-docs:
+    path: /v3/api-docs
+
+
+spring:
+  profiles:
+    active: local
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://dev-jhon-alv.us.auth0.com/
+      client:
+        registration:
+          auth0:
+            client-id: ${AUTH0_CLIENT_ID}
+            client-secret: ${AUTH0_CLIENT_SECRET}
+            scope:
+              - openid
+              - profile
+              - email
+            provider: auth0
+        provider:
+          auth0:
+            issuer-uri: https://dev-jhon-alv.us.auth0.com/
+            authorization-uri: https://dev-jhon-alv.us.auth0.com/authorize
+            token-uri: https://dev-jhon-alv.us.auth0.com/oauth/token
